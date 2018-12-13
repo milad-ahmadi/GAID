@@ -1,1 +1,1 @@
-# **GAID:** **G**enerative **A**dversarial **I**rregularity **D**etection
+# GAID: Generative Adversarial Irregularity Detection
