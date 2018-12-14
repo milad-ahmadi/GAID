@@ -10,6 +10,14 @@ Recognizing irregular tissues in mammography images can be defined as discoverin
 
 ## Prerequisites (my environments)
 
+-Python 3.6
+-Tensorflow = 1.12.0
+-SciPy
+-Pandas 
+-matplotlib
+-scikit-learn
+-seaborn
+
 ## Detests
 
 **[Mias](http://peipa.essex.ac.uk/info/mias.html):** This dataset contains of 322 mammography images in MLO view with 1024*1024 resolution. The data is categorized into 3 classes: (1)Benign, (2)Malignant, and (3) normal. The ground-trust of abnormal (Benign and Malignant tumor) regions are indicated by center and diameter of those regions
