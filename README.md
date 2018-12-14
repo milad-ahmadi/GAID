@@ -12,7 +12,7 @@ Recognizing irregular tissues in mammography images can be defined as discoverin
 
 ## Detests
 
-**Mias:**This dataset contains of 322 mammography images in MLO view with 1024*1024 resolution. The data is categorized into 3 classes: (1)Benign, (2)Malignant, and (3) normal. The ground-trust of abnormal (Benign and Malignant tumor) regions are indicated by center and diameter of those regions
+**[Mias](http://peipa.essex.ac.uk/info/mias.html):** This dataset contains of 322 mammography images in MLO view with 1024*1024 resolution. The data is categorized into 3 classes: (1)Benign, (2)Malignant, and (3) normal. The ground-trust of abnormal (Benign and Malignant tumor) regions are indicated by center and diameter of those regions
 
 ## Training
 
