@@ -35,14 +35,16 @@ Recognizing irregular tissues in mammography images can be defined as discoverin
 ## Testing
 
 ## Results
-
+Examples of patches (denoted by X) and their reconstructed versions using AnoGAN, GANomaly ,and GAID. Left: normal patches; Right: irregular patches. Since GAID is trained only on normal patches, it cannot properly reconstruct irregular patches. Compared to other anomaly detection methods, GAID reconstruction creates an easier discrimination between regular and irregular tissues.
 <p align="center">
   <img src="https://github.com/milad-ahmadi/GAID/blob/master/images/reconstructed results.PNG">
 </p>
 
+Testing results of the proposed irregularity detector on the CBIS-DDSM dataset, trained on MIAS dataset. First row shows X, the original input; Second row visualizes the heat-map of irregularity detection using GAID (brighter areas indicate higher likelihood of irregularity); Third row shows the ground-truth.
 <p align="center">
   <img src="https://github.com/milad-ahmadi/GAID/blob/master/images/heat-map results.PNG">
 </p>
+
 ## To Do
 
 ## Acknowledgement
