@@ -36,6 +36,13 @@ Recognizing irregular tissues in mammography images can be defined as discoverin
 
 ## Results
 
+<p align="center">
+  <img src="https://github.com/milad-ahmadi/GAID/blob/master/images/reconstructed results.PNG">
+</p>
+
+<p align="center">
+  <img src="https://github.com/milad-ahmadi/GAID/blob/master/images/heat-map results.PNG">
+</p>
 ## To Do
 
 ## Acknowledgement
