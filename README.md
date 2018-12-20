@@ -40,7 +40,7 @@ python main.py --dataset=mias --input_height=64 --output_height=64 --patch_size=
 ## Testing
 To test the model on the MIAS test dataset prepared in train step, run the following:
 ```
-python main.py --dataset=mias --test
+python main.py --dataset=mias --input_height=64 --output_height=64 --test
 ```
 
 ## Results
