@@ -32,6 +32,11 @@ Recognizing irregular tissues in mammography images can be defined as discoverin
 
 ## Training
 
+To train the model on MIAS dataset with preparing patches and create train and test datasets, run the following:
+```
+python main.py --dataset=mias --input_height=64 --output_height=64 --patch_size=64 --train
+```
+
 ## Testing
 
 ## Results
