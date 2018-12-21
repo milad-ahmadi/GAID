@@ -10,7 +10,7 @@ from preparing_data import preparing_mias_data
 
 
 flags = tf.app.flags
-flags.DEFINE_integer("epoch",2, "Epoch to train [25]")
+flags.DEFINE_integer("epoch",100, "Epoch to train [100]")
 flags.DEFINE_float("g_learning_rate", 0.0001, "Learning rate of for adam [0.0001]")
 flags.DEFINE_float("d_learning_rate", 0.0001, "Learning rate of for adam [0.0001]")
 flags.DEFINE_float("beta", 0.5, "Momentum term of adam [0.5]")
