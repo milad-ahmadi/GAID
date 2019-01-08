@@ -276,7 +276,7 @@ class GAID(object):
                          roc_auc, best_auc,  total_batch_time/counter))
             print("Epoch: [%2d/%2d], AUC: %.8f, Best AUC: %.8f,  Avg run time: %.8f" % (epoch+1, config.epoch,
                         roc_auc, best_auc,  total_batch_time/counter))
-        print("[*] Training model GAID Done.")
+        
 
     def generator(self, x, isTrain=True, reuse=False, batch_size=None):
         if batch_size == None:
