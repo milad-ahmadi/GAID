@@ -46,10 +46,10 @@ flags.DEFINE_boolean("visualize", False, "True for visualizing, False for nothin
 
 FLAGS = flags.FLAGS
 
-def test_with_patch_image(ugan):
+def test_with_patch_image(gaid):
 
-    ugan.get_test_data()
-    img_name, y_true, res_loss, dis_loss, y_score = ugan.test(FLAGS, True)
+    gaid.get_test_data()
+    img_name, y_true, res_loss, dis_loss, y_score = gaid.test(FLAGS, True)
 
     print('[*] testing ...')
 
@@ -65,9 +65,9 @@ def test_with_patch_image(ugan):
     test_res = list(zip(y_score,y_true))
     np.savetxt("score"+str(FLAGS.patch_size)+".csv", test_res,header="score,label", delimiter=",")
 
-def test_with_full_image(ugan, FLAGS):
+def test_with_full_image(gaid, FLAGS):
     print('[*] testing ...')
-    ugan.test_with_full_image(FLAGS)
+    gaid.test_with_full_image(FLAGS)
 
 def main(_):
     pp.pprint(flags.FLAGS.__flags)
