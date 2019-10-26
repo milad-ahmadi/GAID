@@ -40,7 +40,7 @@ python main.py --dataset=DATASET_NAME --input_height=INPUT_HEIGHT --output_heigh
 ```
 
 ## Testing
-To evaluate the model on the MIAS or INBreast testing datasets prepared in train step, run the following:
+To evaluate the model on the MIAS or INBreast datasets prepared in train step, run the following:
 ```
 python main.py --dataset=DATASET_NAME --input_height=INPUT_HEIGHT --output_height=OUTPUT_HEIGHT --test
 ```
