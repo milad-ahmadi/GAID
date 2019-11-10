@@ -23,7 +23,7 @@ Recognizing irregular tissues in mammography images can be defined as discoverin
 - seaborn
 - CPU or NVIDIA GPU + CUDA CuDNN
 
-## Datasts
+## Datasets
 
 **- [Mias](http://peipa.essex.ac.uk/info/mias.html):** This dataset contains of 322 mammography images in MLO view with 1024*1024 resolution. The data is categorized into 3 classes: Benign, Malignant, and normal. The ground-trust of abnormal (Benign and Malignant tumor) regions are indicated by center and diameter of those regions
 
