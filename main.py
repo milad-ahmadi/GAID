@@ -6,11 +6,12 @@ import tensorflow as tf
 from utils import pp
 from model import GAID
 from evaluate import get_auc
-from preparing_data import preparing_mias_data
+
+from preparing_data import preparing_mias_data, preparing_inbreast_data
 
 
 flags = tf.app.flags
-flags.DEFINE_integer("epoch",100, "Epoch to train [100]")
+flags.DEFINE_integer("epoch",100, "Epoch to train [25]")
 flags.DEFINE_float("g_learning_rate", 0.0001, "Learning rate of for adam [0.0001]")
 flags.DEFINE_float("d_learning_rate", 0.0001, "Learning rate of for adam [0.0001]")
 flags.DEFINE_float("beta", 0.5, "Momentum term of adam [0.5]")
@@ -48,22 +49,24 @@ FLAGS = flags.FLAGS
 
 def test_with_patch_image(gaid):
 
-    gaid.get_test_data()
-    img_name, y_true, res_loss, dis_loss, y_score = gaid.test(FLAGS, True)
+    img_name, y_true, y_score = gaid.test(FLAGS, True)
 
     print('[*] testing ...')
+
+
 
     roc_auc = get_auc(y_true, y_score, True)
 
     print("ROC curve area: %.4f" % roc_auc)
 
+    
     for idx in range(np.shape(y_true)[0]):
-        print("image name: [%s] anomaly score: %.2f, actual label: %.d, generator loss: %.2f, discriminator loss: %.2f" \
+        print("image name: [%s] anomaly score: %.2f, actual label: %.d" \
               % (str(re.split('/|[.]|\\\\', img_name[idx])[-2]), y_score[idx],
-                 y_true[idx], res_loss[idx], dis_loss[idx]))
-
+                 y_true[idx]))
+    
     test_res = list(zip(y_score,y_true))
-    np.savetxt("score"+str(FLAGS.patch_size)+".csv", test_res,header="score,label", delimiter=",")
+    np.savetxt("score-"+str(FLAGS.test_dir)+"-"+str(FLAGS.patch_size)+".csv", test_res,header="score,label", delimiter=",")
 
 def test_with_full_image(gaid, FLAGS):
     print('[*] testing ...')
@@ -137,5 +140,13 @@ if __name__ == '__main__':
         train_dir=FLAGS.train_dir,
         test_dir=FLAGS.test_dir,
         patchsize=FLAGS.patch_size)
+
+    elif FLAGS.dataset == 'inbreast' and FLAGS.preparing_data:
+        preparing_inbreast_data(
+            root_dir=os.path.join(FLAGS.data_dir , FLAGS.dataset) ,
+            source_dir=FLAGS.source_dir ,
+            train_dir=FLAGS.train_dir ,
+            test_dir=FLAGS.test_dir ,
+            patchsize=FLAGS.patch_size)
 
     tf.app.run()
