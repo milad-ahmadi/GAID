@@ -36,53 +36,41 @@ Recognizing irregular tissues in mammography images can be defined as discoverin
 **- [CBIS-DDSM](https://wiki.cancerimagingarchive.net/display/Public/CBIS-DDSM#fa7d4f2e58a64fbaaab671105caa85f4):** This dataset contains 2,620 scanned film mammography studies from both CC and MLO views. The labels in this dataset also include benign, malignant, and normal with verified pathology information. We use this dataset only in a testing scenario and qualitatively evaluate the pretrained model on MIAS and INbreast on this data.
 
 ## Data Structures
-
-var routes = (
-  <Route name="App">
-    <Route name="Admin">
-      <Route name="Users"/>
-      <Route name="Reports"/>
-    </Route>
-    <Route name="Course">
-      <Route name="Assignments"/>
-    </Route>
-  </Route>
-);
-    
+   
 ```
-data (dir)
-    DATASET Name (dir)
-        test (dir)
-            normal (dir)
-                 normal-0.png
-                 normal-1.png
-                 .
-                 .
-                 .
-            abnormal (dir)
-                 mass-0.png
-                 mass-1.png
-                 .
-                 .
-                 .
-            full image (dir)
-                 mask (dir)
-                      full image 0_mask.png
-                      full image 1_mask.png
-                      .
-                      .
-                      .
-                 full image 0.png
-                 full image 1.png
-                 .
-                 .
-                 .                      
-        train (dir)
-            normal-0.png
-            normal-1.png
-            .
-            .
-            .
+data 
+  └── DATASET Name
+        ├── test
+        │     ├── normal
+        │     │      ├── normal-0.png
+        │     │      ├── normal-1.png
+        │     │      ├── .
+        │     │      ├── .
+        │     │      └── .
+        │     ├── abnormal
+        │     │      ├── mass-0.png
+        │     │      ├── mass-1.png
+        │     │      ├── .
+        │     │      ├── .
+        │     │      └── .
+        │     └── full image
+        │            ├── mask
+        │            │      ├── full image 0_mask.png
+        │            │      ├── full image 1_mask.png
+        │            │      ├── .
+        │            │      ├── .
+        │            │      └── .
+        │            ├── full image 0.png
+        │            ├── full image 1.png
+        │            ├── .
+        │            ├── .
+        │            └── .
+        └── train
+              ├── normal-0.png
+              ├── normal-1.png
+              ├── .
+              ├── .
+              └── .
 ```
           
 ## Training
