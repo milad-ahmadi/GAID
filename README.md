@@ -16,11 +16,14 @@ Recognizing irregular tissues in mammography images can be defined as discoverin
 ## Prerequisites (my environments)
 - Python 3.6
 - Tensorflow 
-- SciPy
+- SciPy = 1.0.0
+- Pillow
 - Pandas 
 - matplotlib
 - scikit-learn
 - seaborn
+- OpenCV
+- [mritopng](https://github.com/danishm/mritopng) (Convert DICOM Files to PNG)
 - CPU or NVIDIA GPU + CUDA CuDNN
 
 ## Datasets
