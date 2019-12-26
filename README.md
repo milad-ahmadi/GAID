@@ -35,6 +35,44 @@ Recognizing irregular tissues in mammography images can be defined as discoverin
 
 **- [CBIS-DDSM](https://wiki.cancerimagingarchive.net/display/Public/CBIS-DDSM#fa7d4f2e58a64fbaaab671105caa85f4):** This dataset contains 2,620 scanned film mammography studies from both CC and MLO views. The labels in this dataset also include benign, malignant, and normal with verified pathology information. We use this dataset only in a testing scenario and qualitatively evaluate the pretrained model on MIAS and INbreast on this data.
 
+## Data Structures
+data (dir)
+    DATASET Name (dir)
+        test (dir)
+            normal (dir)
+                 normal-0.png
+                 normal-1.png
+                 .
+                 .
+                 .
+            abnormal (dir)
+                 mass-0.png
+                 mass-1.png
+                 .
+                 .
+                 .
+            full image (dir)
+                 mask (dir)
+                      full image 0_mask.png
+                      full image 1_mask.png
+                      .
+                      .
+                      .
+                      
+                 full image 0.png
+                 full image 1.png
+                 .
+                 .
+                 .
+                                      
+        train (dir)
+            normal-0.png
+            normal-1.png
+            .
+            .
+            .
+          
+          
 ## Training
 
 To train the model on the MIAS or INBreast datasets with preparing patches and create train and test datasets, run the following:
@@ -52,7 +90,9 @@ To evaluate the generalizability of GAID, we train it on MIAS and INBreast, and 
 ```
 python main.py --dataset=DATASET_NAME --input_height=INPUT_HEIGHT --output_height=OUTPUT_HEIGHT --test_with_patch=False --test
 ```
-Note: Create a folder (input flag: test_full_image_dir) inside the test folder and insert images into this folder with the mask folder.
+
+
+          
 
 ## Results
 Examples of patches (denoted by X) and their reconstructed versions using AnoGAN, GANomaly ,and GAID.
