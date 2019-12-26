@@ -36,6 +36,7 @@ Recognizing irregular tissues in mammography images can be defined as discoverin
 **- [CBIS-DDSM](https://wiki.cancerimagingarchive.net/display/Public/CBIS-DDSM#fa7d4f2e58a64fbaaab671105caa85f4):** This dataset contains 2,620 scanned film mammography studies from both CC and MLO views. The labels in this dataset also include benign, malignant, and normal with verified pathology information. We use this dataset only in a testing scenario and qualitatively evaluate the pretrained model on MIAS and INbreast on this data.
 
 ## Data Structures
+```
 data (dir)
     DATASET Name (dir)
         test (dir)
@@ -58,20 +59,18 @@ data (dir)
                       .
                       .
                       .
-                      
                  full image 0.png
                  full image 1.png
                  .
                  .
-                 .
-                                      
+                 .                      
         train (dir)
             normal-0.png
             normal-1.png
             .
             .
             .
-          
+```
           
 ## Training
 
