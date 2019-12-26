@@ -106,8 +106,8 @@ Testing results of the proposed irregularity detector on the CBIS-DDSM dataset, 
 </p>
 
 ## Contact
-For questions about our paper or code, please contact [Milad Ahmadi](milad_ahmadi@comp.iust.ac.ir).
+For questions about our paper or code, please contact [Milad Ahmadi](mailto:milad_ahmadi@comp.iust.ac.ir).
 
 ## Acknowledgement
-Thanks for @LeeDoYup 's implementation of AnoGAN. I implemented GAID based on his implementation.
+Thanks for @LeeDoYup 's implementation of [AnoGAN] (https://github.com/LeeDoYup/AnoGAN-tf). I implemented GAID based on his implementation.
 
