@@ -12,11 +12,11 @@ import seaborn as sns
 from six.moves import xrange
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-
+import shutil
 from ops import *
 from utils import *
 from evaluate import get_auc
-from preparing_data import extract_patches
+from preparing_data import extract_patches, adaptive_histogram_equalization
 
 
 def conv_out_size_same(size, stride):
@@ -264,7 +264,7 @@ class GAID(object):
                         print("one pic error!...")
 
             # test
-            _,y_true, g_loss, d_loss, y_score = self.test(config)
+            _,y_true, y_score = self.test(config)
 
             roc_auc = get_auc(y_true, y_score)
 
@@ -367,27 +367,28 @@ class GAID(object):
     def get_test_data(self):
 
         normal_data_names = glob(
-            os.path.join(self.data_dir, self.dataset_name, self.test_dir, 'normal' , self.input_fname_pattern))
+            os.path.join(self.data_dir , self.dataset_name , self.test_dir , 'normal' , self.input_fname_pattern))
         normal_data_label = np.zeros((np.shape(normal_data_names)[0]))
 
         abnormal_data_names = glob(
-            os.path.join(self.data_dir, self.dataset_name, self.test_dir, 'abnormal', self.input_fname_pattern))
+            os.path.join(self.data_dir , self.dataset_name , self.test_dir , 'abnormal' , self.input_fname_pattern))
         abnormal_data_label = np.ones((np.shape(abnormal_data_names)[0]))
 
         self.test_data_names = normal_data_names + abnormal_data_names
-        self.test_data_label = np.concatenate((normal_data_label, abnormal_data_label),axis=0)
-        zip_names_label = list(zip(self.test_data_names, self.test_data_label))
+        self.test_data_label = np.concatenate((normal_data_label , abnormal_data_label) , axis=0)
+
+        zip_names_label = list(zip(self.test_data_names , self.test_data_label))
         random.shuffle(zip_names_label)
-        self.test_data_names, self.test_data_label = zip(*zip_names_label)
+        self.test_data_names , self.test_data_label = zip(*zip_names_label)
         self.test_data_label = np.array(self.test_data_label).astype(int)
         batch = [
-            get_image(name, input_height=self.input_height, input_width=self.input_width,
-                      resize_height=self.output_height,
-                      resize_width=self.output_width, crop=self.crop, grayscale=self.grayscale) for name in
+            get_image(name , input_height=self.input_height , input_width=self.input_width ,
+                      resize_height=self.output_height ,
+                      resize_width=self.output_width , crop=self.crop , grayscale=self.grayscale) for name in
             self.test_data_names]
 
         if self.grayscale:
-            batch_images = np.array(batch).astype(np.float32)[:, :, :, None]
+            batch_images = np.array(batch).astype(np.float32)[: , : , : , None]
         else:
             batch_images = np.array(batch).astype(np.float32)
 
@@ -395,7 +396,7 @@ class GAID(object):
 
         print(" [*] test data for anomaly detection is loaded")
 
-    def test(self,config, save_generated=False):
+    def test(self , config , save_generated=False):
 
         num_test_image = np.shape(self.test_data)[0]
 
@@ -403,28 +404,28 @@ class GAID(object):
         test_image_rec_loss = []
         test_image_dis_loss = []
         for idx in range(num_test_image):
-            input_image = np.expand_dims(self.test_data[idx], axis=0)
+            input_image = np.expand_dims(self.test_data[idx] , axis=0)
 
-            generated_image, rec_loss, dis_loss, anomaly_score = self.sess.run(
-                [self.ano_G, self.rec_loss, self.dis_loss, self.anomaly_score],
+            generated_image , rec_loss , dis_loss , anomaly_score = self.sess.run(
+                [self.ano_G , self.rec_loss , self.dis_loss , self.anomaly_score] ,
                 feed_dict={self.test_inputs: input_image})
-            generated_image = np.squeeze(generated_image, axis=0)
-            generated_image = np.squeeze(generated_image, axis=2)
 
-            input_image = np.squeeze(input_image, axis=0)
-            input_image = np.squeeze(input_image, axis=2)
+            generated_image = np.squeeze(generated_image , axis=0)
+            generated_image = np.squeeze(generated_image , axis=2)
+
+            input_image = np.squeeze(input_image , axis=0)
+            input_image = np.squeeze(input_image , axis=2)
 
             test_image_ano_score.append(anomaly_score)
             test_image_rec_loss.append(rec_loss)
             test_image_dis_loss.append(dis_loss)
 
-            inverse_transform(generated_image)
-            generated_image = np.concatenate((generated_image, input_image), axis=1)
+            # generated_image = np.concatenate((generated_image, input_image), axis=1)
 
             if save_generated:
-                plt.imsave(os.path.join(config.test_result_dir,"test_generated",
-                            str(re.split('/|[.]|\\\\',self.test_data_names[idx])[-2]) + '.png')
-                           , inverse_transform(generated_image), cmap=cm.gray)
+                plt.imsave(os.path.join(config.test_result_dir , "test_generated" ,
+                                        str(re.split('/|[.]|\\\\' , self.test_data_names[idx])[-2]) + '.png')
+                           , inverse_transform(generated_image) , cmap=cm.gray)
 
         test_image_ano_score = np.array(test_image_ano_score)
 
@@ -435,37 +436,106 @@ class GAID(object):
         normalized_test_image_rec_loss = (test_image_rec_loss - min(test_image_rec_loss)) \
                                          / (max(test_image_rec_loss) - min(test_image_rec_loss))
 
-        return self.test_data_names,self.test_data_label, normalized_test_image_rec_loss, normalized_test_image_dis_loss,\
-               normalized_test_image_ano_score
+        avg_norm = sum(normalized_test_image_ano_score[i] for i in range(len(self.test_data_label)) if
+                       self.test_data_label[i] == 0) / \
+                   sum(1 for i in range(len(self.test_data_label)) if self.test_data_label[i] == 0)
+        avg_abnorm = sum(normalized_test_image_ano_score[i] for i in range(len(self.test_data_label)) if
+                         self.test_data_label[i] == 1) / \
+                     sum(1 for i in range(len(self.test_data_label)) if self.test_data_label[i] == 1)
 
-    def test_with_full_image(self, config):
-        self.full_images_names = glob(
-            os.path.join(self.data_dir, self.dataset_name, self.test_dir, config.test_full_image_dir, self.input_fname_pattern))
-        self.full_images = [imread(name, grayscale=self.grayscale) for name in self.full_images_names]
-        num_images = np.shape(self.full_images_names)[0]
-        patch_size = [config.patch_size, config.patch_size]
-        sns.set()
+        y_true_tune = []
+        y_score_tune = []
+        num_norm = 0
+        num_abnorm = 0
+
+        if os.path.exists(os.path.join(self.data_dir, self.dataset_name, self.test_dir, 'normal_tune')):
+            shutil.rmtree(os.path.join(self.data_dir, self.dataset_name, self.test_dir, 'normal_tune'))
+        os.makedirs(os.path.join(self.data_dir, self.dataset_name, self.test_dir, 'normal_tune'))
+        if os.path.exists(os.path.join(self.data_dir, self.dataset_name, self.test_dir, 'abnormal_tune')):
+            shutil.rmtree(os.path.join(self.data_dir, self.dataset_name, self.test_dir, 'abnormal_tune'))
+        os.makedirs(os.path.join(self.data_dir, self.dataset_name, self.test_dir, 'abnormal_tune'))
+
+        test_data = np.squeeze(self.test_data, axis=3)
+
+        for idx in range(len(self.test_data_label)):
+            if (self.test_data_label[idx] == 0 and normalized_test_image_ano_score[idx] <= avg_norm*3):
+                y_true_tune.append(self.test_data_label[idx])
+                y_score_tune.append(normalized_test_image_ano_score[idx])
+                num_norm = num_norm + 1
+
+                plt.imsave(os.path.join(self.data_dir, self.dataset_name, self.test_dir, 'normal_tune',
+                                        str(re.split('/|[.]|\\\\', self.test_data_names[idx])[-2]) + '.png')
+                           , inverse_transform(test_data[idx]), cmap=cm.gray)
+
+            if (self.test_data_label[idx] == 1 and normalized_test_image_ano_score[idx] >= avg_abnorm/3):
+                y_true_tune.append(self.test_data_label[idx])
+                y_score_tune.append(normalized_test_image_ano_score[idx])
+                num_abnorm = num_abnorm + 1
+
+                plt.imsave(os.path.join(self.data_dir, self.dataset_name, self.test_dir, 'abnormal_tune',
+                                        str(re.split('/|[.]|\\\\', self.test_data_names[idx])[-2]) + '.png')
+                           , inverse_transform(test_data[idx]), cmap=cm.gray)
+
+
+
+
+        return self.test_data_names , self.test_data_label , normalized_test_image_ano_score
+
+    def test_with_full_image(self , config , ano_thrsh=0.77):
+
+        full_images_names = glob(
+            os.path.join(self.data_dir , self.dataset_name , self.test_dir , config.test_full_image_dir ,
+                         self.input_fname_pattern))
+
+        org_mask_names = glob(
+            os.path.join(self.data_dir , self.dataset_name , self.test_dir , config.test_full_image_dir , 'mask' ,
+                         self.input_fname_pattern))
+
+        if os.path.exists(os.path.join(self.data_dir , self.dataset_name , self.test_dir , config.test_full_image_dir ,
+                                       'generated mask')):
+            shutil.rmtree(os.path.join(self.data_dir , self.dataset_name , self.test_dir , config.test_full_image_dir ,
+                                       'generated mask'))
+        os.makedirs(os.path.join(self.data_dir , self.dataset_name , self.test_dir , config.test_full_image_dir ,
+                                 'generated mask'))
+        if os.path.exists(os.path.join(self.data_dir , self.dataset_name , self.test_dir , config.test_full_image_dir ,
+                                       'heat map')):
+            shutil.rmtree(os.path.join(self.data_dir , self.dataset_name , self.test_dir , config.test_full_image_dir ,
+                                       'heat map'))
+        os.makedirs(os.path.join(self.data_dir , self.dataset_name , self.test_dir , config.test_full_image_dir ,
+                                 'heat map'))
+
+        num_images = np.shape(full_images_names)[0]
+        patch_size = [config.patch_size , config.patch_size]
+        print(os.path.join(self.data_dir , self.dataset_name , self.test_dir ,
+                           config.test_full_image_dir , self.input_fname_pattern))
+        total_IOU = 0
+
         for idx in range(num_images):
 
-            print("Testing full image "+str(idx)+" --image name: "+str(re.split('/|[.]|\\\\', self.full_images_names[idx])[-2]))
-            patches, regions = extract_patches(self.full_images[idx], patch_size, overlap_allowed=0.2, cropvalue=None,
-                                               crop_fraction_allowed=1)
+            full_image = imread(full_images_names[idx] , grayscale=self.grayscale)
+
+            full_image = adaptive_histogram_equalization(full_image)
+
+            org_mask = imread(org_mask_names[idx] , grayscale=self.grayscale)
+
+            patches , regions = extract_patches(full_image , patch_size , overlap_allowed=0.1 , cropvalue=None ,
+                                                crop_fraction_allowed=1)
 
             num_patches = np.shape(patches)[0]
             if self.grayscale:
-                patches = np.array(patches).astype(np.float32)[:, :, :, None]
+                patches = np.array(patches).astype(np.float32)[: , : , : , None]
             else:
                 patches = np.array(patches).astype(np.float32)
-            active = np.ones((np.shape(self.full_images[idx])[0], np.shape(self.full_images[idx])[1]))
-            image_scores = np.zeros((np.shape(self.full_images[idx])[0], np.shape(self.full_images[idx])[1]))
+            active = np.ones((np.shape(full_image)[0] , np.shape(full_image)[1]))
+            image_scores = np.zeros((np.shape(full_image)[0] , np.shape(full_image)[1]))
             for jdx in range(num_patches):
                 active[regions[jdx]] += 1
 
             ano_scores = []
             for jdx in range(num_patches):
-                input_image = np.expand_dims(patches[jdx], axis=0)
-                generated_image, rec_loss, dis_loss, anomaly_score = self.sess.run(
-                    [self.ano_G, self.rec_loss, self.dis_loss, self.anomaly_score],
+                input_image = np.expand_dims(patches[jdx] , axis=0)
+                generated_image , rec_loss , dis_loss , anomaly_score = self.sess.run(
+                    [self.ano_G , self.rec_loss , self.dis_loss , self.anomaly_score] ,
                     feed_dict={self.test_inputs: input_image})
                 ano_scores.append(anomaly_score)
 
@@ -474,12 +544,33 @@ class GAID(object):
             for jdx in range(num_patches):
                 image_scores[regions[jdx]] += norm_ano_scores[jdx] / active[regions[jdx]]
 
+            mask = image_scores > ano_thrsh
+
+            scipy.misc.imsave(
+                os.path.join(self.data_dir , self.dataset_name , self.test_dir , config.test_full_image_dir , \
+                             'generated mask' , str(re.split('/|\\\\' , org_mask_names[idx])[-1])) ,
+                mask.astype(np.float32))
+
+            overlap = np.logical_and(mask , org_mask)  # Logical AND
+            union = np.logical_or(mask , org_mask)  # Logical OR
+
+            IOU = overlap.sum() / float(union.sum())
+
+            total_IOU = total_IOU + IOU
+            print("Testing with mask ----> image " + str(idx) + " --image name: " + str(
+                re.split('/|[.]|\\\\' , full_images_names[idx])[-2]) + " --IOU: " + str(IOU))
+
+            sns.set()
+
             ax = sns.heatmap(image_scores, vmin=0, vmax=1, xticklabels=False,
-                             yticklabels=False, cbar= (idx == 0), square=True)
+                                 yticklabels=False, cbar= (idx == 0), square=True)
             figure = ax.get_figure()
-            figure.savefig(os.path.join(config.test_result_dir, "test_heatmap",
-                                        str(re.split('/|[.]|\\\\', self.full_images_names[idx])[
-                                                -2]) + '-' + 'heatmap' + '.png'), dpi=400)
+            figure.savefig(os.path.join(self.data_dir, self.dataset_name, self.test_dir, config.test_full_image_dir,
+                                 'heat map',str(re.split('/|[.]|\\\\', full_images_names[idx])[-2]) + '-'
+                                        + 'heatmap' + '.png'))
+
+        total_IOU = total_IOU / num_images
+        print("[*] IOU (localization): " + str(total_IOU))
 
     @property
     def model_dir(self):
