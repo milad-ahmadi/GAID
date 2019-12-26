@@ -105,4 +105,9 @@ Testing results of the proposed irregularity detector on the CBIS-DDSM dataset, 
   <img src="https://github.com/milad-ahmadi/GAID/blob/master/images/heat-map results.png">
 </p>
 
+## Contact
+For questions about our paper or code, please contact [Milad Ahmadi](milad_ahmadi@comp.iust.ac.ir).
+
+## Acknowledgement
+Thanks for @LeeDoYup 's implementation of AnoGAN. I implemented GAID based on his implementation.
 
