@@ -33,7 +33,7 @@ Recognizing irregular tissues in mammography images can be defined as discoverin
 **- [INbreast](https://www.ncbi.nlm.nih.gov/pubmed/22078258):** This dataset contains 410 mammography images in mediolateraloblique
 (MLO) and cranial-caudal (CC) views with a 3000*4000 resolution.We consider all the mass cases in this dataset as irregular versus the normal class present in the dataset.
 
-**- [CBIS-DDSM](https://wiki.cancerimagingarchive.net/display/Public/CBIS-DDSM#fa7d4f2e58a64fbaaab671105caa85f4):** This dataset contains 2,620 scanned film mammography studies from both CC and MLO views. The labels in this dataset also include benign, malignant, and normal with verified pathology information.
+**- [CBIS-DDSM](https://wiki.cancerimagingarchive.net/display/Public/CBIS-DDSM#fa7d4f2e58a64fbaaab671105caa85f4):** This dataset contains 2,620 scanned film mammography studies from both CC and MLO views. The labels in this dataset also include benign, malignant, and normal with verified pathology information. We use this dataset only in a testing scenario and qualitatively evaluate the pretrained model on MIAS and INbreast on this data.
 
 ## Training
 
@@ -50,8 +50,9 @@ python main.py --dataset=DATASET_NAME --input_height=INPUT_HEIGHT --output_heigh
 
 To evaluate the generalizability of GAID, we train it on MIAS and INBreast, and test it on the CBIS-DDSM dataset:
 ```
-python main.py ...
+python main.py --dataset=DATASET_NAME --input_height=INPUT_HEIGHT --output_height=OUTPUT_HEIGHT --test_with_patch=False --test
 ```
+Note: Create a folder (input flag: test_full_image_dir) inside the test folder and insert images into this folder with the mask folder.
 
 ## Results
 Examples of patches (denoted by X) and their reconstructed versions using AnoGAN, GANomaly ,and GAID.
@@ -64,10 +65,4 @@ Testing results of the proposed irregularity detector on the CBIS-DDSM dataset, 
   <img src="https://github.com/milad-ahmadi/GAID/blob/master/images/heat-map results.png">
 </p>
 
-
-## To Do
-
-## Acknowledgement
-
-## Reference
 
