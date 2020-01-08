@@ -95,12 +95,12 @@ python main.py --dataset=DATASET_NAME --input_height=INPUT_HEIGHT --output_heigh
           
 
 ## Results
-Examples of patches (denoted by X) and their reconstructed versions using AnoGAN, GANomaly ,and GAID.
+fig 1 Examples of patches (denoted by X) and their reconstructed versions using AnoGAN, GANomaly ,and GAID.
 <p align="center">
   <img src="https://github.com/milad-ahmadi/GAID/blob/master/images/reconstructed results.PNG">
 </p>
 
-Testing results of the proposed irregularity detector on the CBIS-DDSM dataset, trained on MIAS and INBreast datasets. Brighter areas of heat-map indicate higher likelihood of irregularity; The heat-map1 and heat-map2 are for training the GAID on MIAS and INBreast datasets, respectively.
+fig 2 Testing results of the proposed irregularity detector on the CBIS-DDSM dataset, trained on MIAS and INBreast datasets. Brighter areas of heat-map indicate higher likelihood of irregularity; The heat-map1 and heat-map2 are for training the GAID on MIAS and INBreast datasets, respectively.
 <p align="center">
   <img src="https://github.com/milad-ahmadi/GAID/blob/master/images/heat-map results.png">
 </p>
