@@ -1,6 +1,6 @@
 # GAID: Generative Adversarial Irregularity Detection
 
-Tensorflow implementation of [GAID](https://link.springer.com/chapter/10.1007/978-3-030-32281-6_10) [researchgate link](https://www.researchgate.net/publication/336430178_Generative_Adversarial_Irregularity_Detection_in_Mammography_Images)
+Tensorflow implementation of [GAID](https://link.springer.com/chapter/10.1007/978-3-030-32281-6_10) [Download](https://www.researchgate.net/publication/336430178_Generative_Adversarial_Irregularity_Detection_in_Mammography_Images)
 
 This model detect irregular part in mammography images, after training GAID with normal dataset.
 
