@@ -1,9 +1,0 @@
-Tensorflow
-SciPy = 1.0.0
-Pillow
-Pandas
-matplotlib
-scikit-learn
-seaborn
-opencv-python
-mritopng
